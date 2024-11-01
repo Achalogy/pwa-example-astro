@@ -54,7 +54,21 @@
     }
   ],
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000"
+  "theme_color": "#000000",
+  "screenshots": [
+    {
+      "src": "screenshots/screenshot-desktop.png",
+      "sizes": "2560x1440",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshots/screenshot-mobile.png",
+      "sizes": "1170x2532",
+      "type": "image/png"
+    }
+  ]
 }
