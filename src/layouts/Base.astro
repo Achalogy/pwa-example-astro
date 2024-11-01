@@ -12,16 +12,12 @@ const themeCookie = Astro.cookies.get("theme")?.value ?? "light";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title ?? "Achalogy"}</title>
-    <meta
-      name="description"
-      content={desc ??
-        ""}
-    />
+    <meta name="description" content={desc ?? ""} />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico?v=16" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="generator" content={Astro.generator} />
-    
+
     <!-- Añadir Hack Font -->
     <!-- <link
       rel="stylesheet"
@@ -32,10 +28,55 @@ const themeCookie = Astro.cookies.get("theme")?.value ?? "light";
     /> -->
 
     <meta name="theme-color" content="#ffffff" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <ViewTransitions />
   <body>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log("Service Worker registrado con éxito");
+            })
+            .catch((error) => {
+              console.log("Error al registrar el Service Worker:", error);
+            });
+        });
+      }
+    </script>
+
+    <script>
+      let deferredPrompt;
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        console.log("test");
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("installButton").style.display = "block";
+      });
+
+      document
+        .getElementById("installButton")
+        .addEventListener("click", async () => {
+          document.getElementById("installButton").style.display = "none";
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === "accepted") {
+            console.log("El usuario aceptó la instalación");
+          } else {
+            console.log("El usuario rechazó la instalación");
+          }
+          deferredPrompt = null;
+        });
+
+      window.addEventListener("appinstalled", () => {
+        document.getElementById("installButton").style.display = "none";
+        console.log("La app ha sido instalada");
+      });
+    </script>
+
     <main class={themeCookie}>
       <div
         class={`flex flex-col min-h-screen bg-white dark:bg-slate-900 dark:text-white`}
@@ -53,9 +94,7 @@ const themeCookie = Astro.cookies.get("theme")?.value ?? "light";
         <div
           class="select-none p-4 flex justify-between px-[5%] bg-gradient-to-r dark:from-slate-800 dark:to-slate-800 from-purple-500 to-indigo-600 text-white"
         >
-          <a class="font-semibold" href="/"
-            >Achalogy</a
-          >
+          <a class="font-semibold" href="/">Achalogy</a>
           <p onclick="changeTheme()" class="cursor-pointer">
             {themeCookie == "dark" ? <IconSun /> : <IconMoon />}
           </p>
@@ -120,4 +159,6 @@ const themeCookie = Astro.cookies.get("theme")?.value ?? "light";
       </style>
     </main>
   </body>
+
+
 </html>
